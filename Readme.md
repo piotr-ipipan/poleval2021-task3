@@ -19,10 +19,7 @@ git clone https://github.com/poleval/2021-ocr-correction.git
 mkdir data
 ```
 
-You can download model or train yourself:
-```shell
-wget 
-```
+You can use model `enelpol/poleval2021-task3` or train yourself.
 
 ### Training
 
@@ -65,7 +62,7 @@ python3 train_mt5.py data/train.train.tsv.shuf data/dev.train.tsv --batch_size 1
 
 4. Predict.
 ```shell
-MODEL="model_bin_*/best_model/" #edit
+MODEL="enelpol/poleval2021-task3" # "model_bin_*/best_model/" #edit
 MODEL_TYPE=t5
 python3 predict_mt5.py 2021-ocr-correction/test-A/in.tsv 2021-ocr-correction/test-A/output.tsv --model_name $MODEL --model_type $MODEL_TYPE --chunk 50 --stride 0 --num_beams 8 --batch_size 8
 python3 predict_mt5.py 2021-ocr-correction/test-B/in.tsv 2021-ocr-correction/test-B/output.tsv --model_name $MODEL --model_type $MODEL_TYPE --chunk 50 --stride 0 --num_beams 8 --batch_size 8
