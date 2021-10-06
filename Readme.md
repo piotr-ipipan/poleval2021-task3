@@ -15,8 +15,11 @@ Model plT5-large achieves 4.302 WER score. The best solution is 3.744 WER score 
 ## Instructions
 
 ```shell
-git clone https://github.com/poleval/2021-ocr-correction.git
+git clone -b secret https://github.com/poleval/2021-ocr-correction.git
 mkdir data
+virtualenv -p python3 venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
 You can use model `enelpol/poleval2021-task3` or train yourself.
