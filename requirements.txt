@@ -1,0 +1,6 @@
+python-Levenshtein
+tqdm
+jsonlines
+transformers
+simpletransformers
+git+https://github.com/djstrong/flair.git@patch-9
