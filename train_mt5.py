@@ -1,5 +1,6 @@
 import logging
 import os
+#os.environ['CUDA_LAUNCH_BLOCKING'] = "1" #do debuggingu
 import random
 import sys
 import time
@@ -20,6 +21,9 @@ from simpletransformers.t5 import T5Model, T5Args
 logging.basicConfig(level=logging.INFO)
 transformers_logger = logging.getLogger("transformers")
 transformers_logger.setLevel(logging.WARNING)
+
+torch.set_num_threads(2)
+
 
 def wer_list(source:List[str],target:List[str]):
     # average wrod WER between lists of strings
@@ -55,6 +59,8 @@ if __name__ == '__main__':
     parser.add_argument('eval_path', help='')
     parser.add_argument('--model_type', default="mt5", help='Name the model')
     parser.add_argument('--model_name', default="google/mt5-base", help='Name the model')
+    #parser.add_argument('--model_name', default="google/mt5-small", help='Name the model') ############ MOJE
+    
     parser.add_argument('--datasets',
                         help='delimited datasets input: all_80_20, all_batch124_80_20, batch124_80_20, all_50_50, all_batch124_50_50, batch124_50_50',
                         type=str, default='all_80_20')
@@ -77,7 +83,9 @@ if __name__ == '__main__':
     parser.add_argument('--repetition_penalty', default=1.0, type=float, help='')
     parser.add_argument('--scheduler', default='constant_schedule_with_warmup', help='')
 
-    cache_dir = os.getenv('SCRATCH', '.') + '/cache/'
+    #cache_dir = os.getenv('SCRATCH', '.') + '/cache/' #############MOJE
+    cache_dir = '/home/pborkowski/storage/polevaltask3_cache/' #############MOJE
+    
     args = parser.parse_args()
     
     torch.manual_seed(args.seed)
@@ -111,6 +119,17 @@ if __name__ == '__main__':
     
     # Configure the model
     model_args = T5Args()
+
+    ###caly ponizszy blok dodalem sam ###
+    model_args.use_multiprocessing = False ############### MOJE 
+    #model_args.num_workers = 3 ############### MOJE
+    model_args.use_multiprocessing_for_evaluation = False  # #######ODKOM JAK ZA MALO PAMIECI
+    # model_args.set_num_threads = 26     ############### MOJE
+    # model_args.overwrite_output_dir = True ############### MOJE
+    model_args.process_count = 2
+    model_args.cache_dir = cache_dir
+    ###############
+
     model_args.num_train_epochs = args.epochs
     # model_args.no_save = True
     model_args.evaluate_generated_text = True
@@ -149,8 +168,8 @@ if __name__ == '__main__':
     model_args.top_p = 0.95
 
     time_of_run = time.time()
-    output_dir = 'model_bin_' + args.model_name.replace('/', '_') + '_' + str(
-        time_of_run)
+    output_dir = cache_dir+'model_bin_' + args.model_name.replace('/', '_') + '_' + str( 
+        time_of_run) ##MOJA MODYFIKACJA dodanie cache_dir+
     best_model_dir = output_dir + "/best_model/"
 
     model_args.output_dir = output_dir
