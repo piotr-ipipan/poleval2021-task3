@@ -1,0 +1,76 @@
+Kod biore ze strony:
+https://github.com/enelpol/poleval2021-task3
+
+
+nohup python3 train_mt5.py data/train.train.tsv.shuf data/dev.train.tsv --batch_size 16 --num_beams 2 --warmup_steps 1 --epochs 1 --evaluate_during_training_steps 500 --scheduler linear_schedule_with_warmup
+nohup python3 train_mt5.py data/train.train.tsv.shuf data/dev.train.tsv --batch_size 12 --num_beams 2 --warmup_steps 1 --epochs 1 --evaluate_during_training_steps 500 --scheduler linear_schedule_with_warmup --model_name allegro/plt5-large --model_type t5
+
+MODEL="/home/pborkowski/storage/polevaltask3_cache/model_bin_google_mt5-small_1670845202.999775_kopia/best_model"
+python3 predict_mt5.py 2021-ocr-correction/test-A/in.tsv 2021-ocr-correction/test-A/output.tsv --model_name $MODEL --model_type "mt5" --chunk 50 --stride 0 --num_beams 8 --batch_size 8
+python3 predict_mt5.py 2021-ocr-correction/test-A/in.tsv 2021-ocr-correction/test-A/output.tsv --model_name $MODEL --model_type "mt5" --chunk 50 --stride 0 --num_beams 8 --batch_size 8
+
+##############################
+Trenowanie modelu na moich danych z tessreacta:
+
+#1. Prepare aligned texts using space-tokenizer.
+
+python3 align.py /home/pborkowski/storage/ebooks/splitted/dev_in.tsv /home/pborkowski/storage/ebooks/splitted/dev_exp.tsv data_tesser/dev.jsonl data_tesser/dev-baseline.tsv
+python3 align.py /home/pborkowski/storage/ebooks/splitted/train_in.tsv /home/pborkowski/storage/ebooks/splitted/train_exp.tsv data_tesser/train.jsonl data_tesser/train-baseline.tsv
+python3 align.py /home/pborkowski/storage/ebooks/splitted/test_in.tsv /home/pborkowski/storage/ebooks/splitted/test_exp.tsv data_tesser/test.jsonl data_tesser/test-baseline.tsv
+
+#2. Prepare data for training.
+
+python3 chunk_generator_context.py data_tesser/dev.jsonl data_tesser/dev.train.tsv --chunk 50 --stride 0
+python3 chunk_generator_context.py data_tesser/train.jsonl data_tesser/train.train.tsv --chunk 50 --stride 0
+python3 chunk_generator_context.py data_tesser/test.jsonl data_tesser/test.train.tsv --chunk 50 --strid 0 
+
+#2b. Mieszamy:
+
+shuf data_tesser/train.train.tsv > data_tesser/train.train.tsv.shuf
+
+
+######### 
+# allego large 
+#nohup python3 -u train_mt5.py data_tesser/train.train.tsv.shuf data_tesser/dev.train.tsv --batch_size 12 --num_beams 2 --warmup_steps 1 --epochs 1 --evaluate_during_training_steps 500 --scheduler linear_schedule_with_warmup --model_name allegro/plt5-large --model_type t5 > nohup2.txt &
+
+# allego small 
+#nohup python3 -u train_mt5.py data_tesser/train.train.tsv.shuf data_tesser/dev.train.tsv --batch_size 12 --num_beams 2 --warmup_steps 1 --epochs 1 --evaluate_during_training_steps 500 --scheduler linear_schedule_with_warmup --model_name allegro/plt5-small --model_type t5 > nohup_alleg_small.txt &
+# allego base
+nohup python3 -u train_mt5.py data_tesser/train.train.tsv.shuf data_tesser/dev.train.tsv --batch_size 12 --num_beams 2 --warmup_steps 1 --epochs 1 --evaluate_during_training_steps 500 --scheduler linear_schedule_with_warmup --model_name allegro/plt5-base --model_type t5 > nohup_alleg_base.txt &
+
+
+nohup python3 -u train_mt5.py data_tesser/train.train.tsv.shuf data_tesser/dev.train.tsv --batch_size 12 --num_beams 2 --warmup_steps 1 --epochs 1 --evaluate_during_training_steps 500 --scheduler linear_schedule_with_warmup --model_name google/mt5-small --model_type mt5
+
+#######
+#USUWANIE PRZEBIEGOW Z WANDB
+
+import wandb
+api = wandb.Api()
+run = api.run("piotrb/sh-v5/1s6uwiku")
+run.delete()
+
+#######
+
+
+
+
+
+Przykłady:
+Bez poprawy:
+żądania zainstalowania sygnalizacji świetlnej
+Z poprawą:
+żądania zainstalowania sygnal świetlnej
+
+-----
+Bez poprawy:
+z Zarządem Dróg Powiatowych w Wysokiem
+
+z poprawą:
+z Zarządem Dróg Starostach w
+
+-----
+bez poprawy:
+gotowości do zaangażowania się, do wzięcia na siebie odpowiedzialnoSci.
+
+Z poprawą:
+gotowości do zaangażowania się, do wzięcia na siebie odpowiedzi.

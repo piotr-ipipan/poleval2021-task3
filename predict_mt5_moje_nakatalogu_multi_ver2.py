@@ -38,8 +38,10 @@ transformers_logger.setLevel(logging.WARNING)
 # # save_path_dir = "/home/pborkowski/storage/pdfy_task/5_do_ewaluacji/corrected_txt_small/"
 
 
-data_path_dir = "/home/pborkowski/storage/pdfy_task/200_do_ewaluacji/txt/"
-save_path_dir = "/home/pborkowski/storage/pdfy_task/200_do_ewaluacji/corrected_txt"
+# data_path_dir = "/home/pborkowski/storage/pdfy_task/200_do_ewaluacji/txt/"
+# save_path_dir = "/home/pborkowski/storage/pdfy_task/200_do_ewaluacji/corrected_txt"
+data_path_dir = "/home/pborkowski/storage/pdfy_task/1000_anotowanych_txt/"
+save_path_dir = "/home/pborkowski/storage/pdfy_task/1000_anotowanych_txt_corrected/"
 
 
 s=" "
